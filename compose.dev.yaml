@@ -2,6 +2,10 @@ services:
   chroma_db:
     image: chromadb/chroma:0.6.4.dev226
     container_name: chroma_db
+    networks:
+      devfiles-network:
+        aliases:
+          - devfiles-chroma_db
     volumes:
       - chroma_db_data:/chroma/chroma
     environment:
@@ -16,6 +20,10 @@ services:
   ollama_llm:
     image: ollama/ollama:latest
     container_name: ollama_llm
+    networks:
+      devfiles-network:
+        aliases:
+          - devfiles-ollama_llm
     volumes:
       - ollama_llm_data:/root/.ollama
     entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama run gemma3:1b && wait"]
@@ -29,6 +37,10 @@ services:
   ollama_embedding:
     image: ollama/ollama:latest
     container_name: ollama_embedding
+    networks:
+      devfiles-network:
+        aliases:
+          - devfiles-ollama_embedding
     volumes:
         - ollama_embedding_data:/root/.ollama
     environment:
@@ -41,7 +53,7 @@ services:
       timeout: 10s
       retries: 3
 
-  app:
+  ai-service:
     build:
       context: .
       dockerfile: Dockerfile-dev
@@ -51,6 +63,10 @@ services:
       - "${API_PORT:-5000}:5000"
     env_file:
       - .env
+    networks:
+      devfiles-network:
+        aliases:
+          - devfiles-ai-service
     depends_on:
       chroma_db:
         condition: service_healthy
@@ -59,6 +75,11 @@ services:
       ollama_embedding:
         condition: service_healthy
 
+networks:
+  devfiles-network:
+    name: devfiles-network
+    driver: bridge
+    external: true
 
 volumes:
   chroma_db_data:
