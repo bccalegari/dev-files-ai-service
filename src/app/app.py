@@ -18,7 +18,7 @@ class App:
         self.middleware_handler.register()
         self.controller_handler.register()
 
-    def run(self, port=int(os.environ.get("API_PORT", 5000))):
+    def run(self, port=int(os.environ.get("AI_SERVICE_PORT", 5000))):
         self.__configure()
         show_banner()
         self.flask.run(debug=True, host='0.0.0.0', port=port)

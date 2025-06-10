@@ -12,7 +12,7 @@ log = Logger()
 class ApiKeyMiddleware:
     @staticmethod
     def before_request():
-        api_key_mock = os.getenv("API_KEY")
+        api_key_mock = os.getenv("AI_SERVICE_KEY")
         api_key_from_header = request.headers.get("X-API-KEY")
 
         if api_key_from_header is None:
